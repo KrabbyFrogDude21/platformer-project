@@ -1,6 +1,7 @@
 import pygame
 from constants import WIDTH, HEIGHT, camera_x, BLUE, GRAVITY
 from shooter import Shooter
+
 class Player(Shooter):
     def __init__(self):
         super().__init__(100, HEIGHT - 100, BLUE)
@@ -40,6 +41,9 @@ class Player(Shooter):
     def update(self, platforms):
         global camera_x
         self.rect.x += self.vel_x
+
+        if self.rect.left < 0:
+            self.rect.x = 0
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_x > 0:  # Moving right
@@ -68,4 +72,3 @@ class Player(Shooter):
         if self.rect.centerx > WIDTH // 2 and self.vel_x != 0:
             camera_x -= self.vel_x
 
-        self.update_bullets(platforms)

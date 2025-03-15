@@ -23,5 +23,3 @@ class Shooter(pygame.sprite.Sprite):
     def update_bullets(self, platforms):
         """Update and draw bullets"""
         self.bullets.update(platforms)
-        for bullet in self.bullets:
-            screen.blit(bullet.image, (bullet.rect.x + camera_x, bullet.rect.y))
