@@ -34,41 +34,39 @@ class Game:
     def draw(self, x, y, image):
         self.screen.blit(image, (x - self.camera_x, y))
 
-    def update_and_draw_bullets(self):
+    def handle_events(self):
+        keys = pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+        return keys
+
+    def update_game_state(self, keys):
+        self.player.update(self.enemy_group, keys, self.platforms)
+        self.enemy.update(self.player)
         self.player.bullets.update(self.platforms)
         for enemy in self.enemy_group:
-            self.enemy.bullets.update(self.platforms)
-            for bullet in enemy.bullets:
-                self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+            enemy.bullets.update(self.platforms)
+        self.update_camera()
+
+    def render_game(self):
+        self.screen.fill(WHITE)
+        for platform in self.platforms:
+            self.draw(platform.rect.x, platform.rect.y, platform.image)
+        self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
+        for enemy in self.enemy_group:
+            self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
         for bullet in self.player.bullets:
             self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
-                
+        for enemy in self.enemy_group:
+            for bullet in enemy.bullets:
+                self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+        pygame.display.update()
+
     def run(self):
         while self.running:
-            self.screen.fill(WHITE)
-            keys = pygame.key.get_pressed()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-            
-            self.player.update(self.enemy_group, keys, self.platforms)
-            self.enemy.update(self.player)
-
-
-            self.update_and_draw_bullets()
-
-            self.update_camera()
-
-            for platform in self.platforms:
-                self.draw(platform.rect.x, platform.rect.y, platform.image)
-
-            self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
-            for enemy in self.enemy_group:
-                self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
-
-            pygame.display.update()
+            keys = self.handle_events()
+            self.update_game_state(keys)
+            self.render_game()
             self.clock.tick(60)
-
         pygame.quit()
-
-
