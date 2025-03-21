@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
 from bullet import Bullet
-from constants import *
+from constants import WIDTH, HEIGHT
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -15,11 +15,10 @@ class Shooter(pygame.sprite.Sprite):
         self.bullets = pygame.sprite.Group()
 
 
-    def shoot(self, direction, colour):
-            bullet = Bullet(self.rect.centerx, self.rect.centery, direction, colour)
+    def shoot(self, direction, colour, speed):
+            bullet = Bullet(self.rect.centerx, self.rect.centery, direction, colour, speed)
             self.bullets.add(bullet)
 
 
     def update_bullets(self, platforms):
-        """Update and draw bullets"""
         self.bullets.update(platforms)
