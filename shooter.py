@@ -18,7 +18,8 @@ class Shooter(pygame.sprite.Sprite):
     def shoot(self, direction, colour, speed):
             bullet = Bullet(self.rect.centerx, self.rect.centery, direction, colour, speed)
             self.bullets.add(bullet)
+            
 
 
-    def update_bullets(self, platforms):
-        self.bullets.update(platforms)
+    def update_bullets(self, platforms, camera_x):
+        self.bullets.update(platforms, camera_x)

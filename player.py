@@ -9,11 +9,12 @@ class Player(Shooter):
         self.vel_y = 0
         self.on_ground = False
         self.last_pressed = True  # Right is true, left is false
+        self.health = 100
         self.init_shot_cooldown = 20
         self.player_bullet_speed = 7
         self.shot_cooldown = 0
         self.direction = 1
-        self.exist = True
+
 
     def move(self, keys):
         global camera_x
@@ -83,8 +84,13 @@ class Player(Shooter):
             for bullet in enemy.bullets:
                 if self.rect.colliderect(bullet.rect):
                     bullet.kill()
-                    print("Player died")
-                    self.exist = False
+                    self.health -= 20
+                    print("Player health:",self.health)
+
+        if self.health == 0:
+            print("You died")
+            self.health = 100 #Reset player health
+            pass #Game over in future
 
 
     def collide_powerup(self, powerup_group):

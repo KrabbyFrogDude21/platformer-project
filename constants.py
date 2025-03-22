@@ -2,7 +2,6 @@ WIDTH = 800
 HEIGHT = 600
 GRAVITY = 1.5
 
-# Colors
 WHITE = (255, 255, 255)
 
 BLUE = (0, 0, 255)

@@ -3,7 +3,7 @@ from constants import WIDTH, HEIGHT, WHITE, BLACK
 from player import Player
 from enemy import Enemy
 from platforms import Platform
-from powerup import Powerup
+
 
 class Game:
     def __init__(self):
@@ -18,7 +18,7 @@ class Game:
         self.enemy = Enemy(600, HEIGHT - 50)
         self.enemy_group.add(self.enemy)
         self.platforms = [
-            Platform(i * 400, HEIGHT - 50, 400, 50) for i in range(10)
+            Platform(i * 400, HEIGHT - 50, 400, 50) for i in range(10) #Ground
         ] + [
             Platform(400, 450, 100, 20),
             Platform(700, 450, 100, 50),
@@ -30,7 +30,8 @@ class Game:
     def update_camera(self):
         if self.player.rect.centerx > WIDTH // 2:
             self.camera_x = self.player.rect.centerx - (WIDTH // 2)
-
+    
+    #Draws everything with the camera offset for scrolling camera
     def draw(self, x, y, image):
         self.screen.blit(image, (x - self.camera_x, y))
 
@@ -41,13 +42,17 @@ class Game:
                 self.running = False
         return keys
 
-    def update_game_state(self, keys):
+    def update(self, keys):
+        self.update_camera()
         self.player.update(self.enemy_group, keys, self.platforms)
         self.enemy.update(self.player)
-        self.player.bullets.update(self.platforms)
+        self.player.bullets.update(self.platforms, self.camera_x)
+        for bullet in self.player.bullets:
+            print(bullet.rect.x) #Testing
+        #print(self.camera_x)
         for enemy in self.enemy_group:
-            enemy.bullets.update(self.platforms)
-        self.update_camera()
+            enemy.bullets.update(self.platforms, self.camera_x)
+
 
     def render_game(self):
         self.screen.fill(WHITE)
@@ -66,7 +71,7 @@ class Game:
     def run(self):
         while self.running:
             keys = self.handle_events()
-            self.update_game_state(keys)
+            self.update(keys)
             self.render_game()
             self.clock.tick(60)
         pygame.quit()
