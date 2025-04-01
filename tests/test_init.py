@@ -1,6 +1,6 @@
 import pygame
 from player import Player
-from enemy import Enemy
+from enemies.enemy import Enemy
 from platforms import Platform
 from bullet import Bullet
 from constants import BLUE, RED, GREEN, WIDTH, HEIGHT

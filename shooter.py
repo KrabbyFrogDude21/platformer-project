@@ -14,12 +14,10 @@ class Shooter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom=(x, y))
         self.bullets = pygame.sprite.Group()
 
-
+    
     def shoot(self, direction, colour, speed):
             bullet = Bullet(self.rect.centerx, self.rect.centery, direction, colour, speed)
             self.bullets.add(bullet)
             
-
-
     def update_bullets(self, platforms, camera_x):
         self.bullets.update(platforms, camera_x)
