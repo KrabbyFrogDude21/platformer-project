@@ -9,7 +9,7 @@ class Player(Shooter):
         self.vel_y = 0
         self.on_ground = False
         self.last_pressed = True  # Right is true, left is false
-        self.health = 100
+        self.health = 3000
         self.init_shot_cooldown = 20
         self.player_bullet_speed = 7
         self.shot_cooldown = 0
@@ -85,23 +85,24 @@ class Player(Shooter):
                 if self.rect.colliderect(bullet.rect):
                     bullet.kill()
                     self.health -= 20
-                    print("Player health:",self.health)
+                    #print("Player health:",self.health)
 
-        if self.health == 0:
-            print("You died")
-            self.health = 100 #Reset player health
-            pass #Game over in future
 
+    def teleport(self, new_x, new_y, camera_x):
+        """
+        Teleports the player to a new position, considering camera_x
+        """
+        # Adjust the teleport location by taking the camera_x into account
+        self.rect.x = new_x - camera_x
+        self.rect.y = new_y
 
     def collide_powerup(self, powerup_group):
         pass
 
-                    
-    def dash(self):
-        pass
     
     #Combined all player functions into 1 for code readability
     def update(self, enemy_group, keys, platforms):
         self.move(keys)
         self.collide_bullet(enemy_group)
         self.collide_platform(platforms)
+

@@ -1,5 +1,5 @@
 import pygame
-from constants import WIDTH, HEIGHT, WHITE, BLACK
+from constants import *
 from player import Player
 from enemies.bouncer import Bouncer
 from enemies.shooter_enemy import ShooterEnemy
@@ -16,20 +16,45 @@ class Game:
         self.camera_x = 0
         self.player = Player()
         self.enemy_group = pygame.sprite.Group()
-        self.enemy1 = Bouncer(600, HEIGHT - 50)
-        self.enemy2 = ShooterEnemy(600)
-        self.enemy_group.add(self.enemy1, self.enemy2)
+        
+        # Add enemies
+        self.enemy_group.add(Bouncer(600, HEIGHT - 50, 400, 800))
+        self.enemy_group.add(Bouncer(500 + 920, HEIGHT - 50, 400 + 920, 800 + 920))        
+        self.enemy_group.add(ShooterEnemy(750, 450))
+        self.enemy_group.add(Bouncer(700 + 920, HEIGHT - 50, 400 + 920, 800 + 920))        
+        self.enemy_group.add(ShooterEnemy(2500, 320))
+        self.enemy_group.add(ShooterEnemy(2100, 320))
+        self.enemy_group.add(ShooterEnemy(2500, 220))
+        self.enemy_group.add(ShooterEnemy(2100, 220))
         self.platforms = [
-            Platform(i * 400, HEIGHT - 50, 400, 50) for i in range(10)  # Ground
+            Platform(i * 400, GROUND_HEIGHT, 400, 50) for i in range(11)  # Ground
         ] + [
             Platform(50, 500, 300, 50),
             Platform(200, 450, 100, 100),
             Platform(400, 450, 100, 20),
             Platform(700, 450, 100, 50),
-            Platform(1000, 500, 100, 50),
-            Platform(1400, 500, 150, 50),
-            Platform(1800, 0, 10, 1000)
+            Platform(1000, 500, 100, 500 + GROUND_HEIGHT),
+            Platform(1100, 430, 100, 430 + GROUND_HEIGHT),
+            Platform(1200, 360, 100, 360 + GROUND_HEIGHT),
+            Platform(1840, 500, 100, 500 + GROUND_HEIGHT),
+            Platform(1840, 500, 100, 500 + GROUND_HEIGHT), 
+            Platform(2200, 450, 100, 450 + GROUND_HEIGHT), #Block
+            Platform(1700, 320, 500, 10),
+            Platform(2300, 320, 500, 10),
+            Platform(1700, 220, 500, 10),
+            Platform(2300, 220, 500, 10),
+            Platform(2000, 120, 1000, 10),
+            Platform(2800, 140, 10, 180),        
+            Platform(2800, 480, 100, 480 + GROUND_HEIGHT),
+            Platform(2700, 400, 100, 400 + GROUND_HEIGHT),
+            Platform(3100, 120, 600, 10),
+            Platform(3800, 120, 600, 10),
+            Platform(3800, 0, 10, 120),
+            Platform(3200, 120, 10, 120 + GROUND_HEIGHT),
+            Platform(3450, 450, 100, 10), #boss platform
+            Platform(3950, 450, 100, 10) #boss platform
         ]
+
 
     def update_camera(self):
         if self.player.rect.centerx > WIDTH // 2:
@@ -48,28 +73,52 @@ class Game:
 
     def update(self, keys):
         self.update_camera()
-        self.player.update(self.1_group, keys, self.platforms)
-        self.enemy.update(self.player, self.platforms)
-        self.player.bullets.update(self.platforms, self.camera_x)
-        for bullet in self.player.bullets:
-            print(bullet.rect.x)  # Testing
+
+        if self.player.health <= 0:
+            self.player.health = 100
+            self.player.rect.midbottom = (100, 500)
+            self.camera_x = 0  # Reset the camera position
+
+        self.player.update(self.enemy_group, keys, self.platforms)
+        if keys[pygame.K_t]:  # For example, pressing 'T' will teleport
+            self.player.teleport(3200, 110, self.camera_x)
+
+        # Update all enemies in the group
         for enemy in self.enemy_group:
+            enemy.update(self.player)  # Works for all enemy types
             enemy.bullets.update(self.platforms, self.camera_x)
-        #mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        # Update player bullets
+        self.player.bullets.update(self.platforms, self.camera_x)
+        mouse_x, mouse_y = pygame.mouse.get_pos()
         #print(mouse_x, mouse_y)
+        print(self.camera_x)
+
 
     def render_game(self):
         self.screen.fill(WHITE)
+
+        # Draw platforms
         for platform in self.platforms:
             self.draw(platform.rect.x, platform.rect.y, platform.image)
+
+        # Draw player
         self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
+
+        # Draw all enemies
         for enemy in self.enemy_group:
             self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
+
+        # Draw player bullets
         for bullet in self.player.bullets:
             self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+
+        # Draw enemy bullets, only if they have bullets
         for enemy in self.enemy_group:
-            for bullet in enemy.bullets:
-                self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+            if hasattr(enemy, "bullets"):
+                for bullet in enemy.bullets:
+                    self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+
         pygame.display.update()
 
     def run(self):

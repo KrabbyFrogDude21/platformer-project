@@ -1,4 +1,4 @@
-from enemy import Enemy
+from enemies.enemy import Enemy
 
 class ShooterEnemy(Enemy):
     def __init__(self, x, y):

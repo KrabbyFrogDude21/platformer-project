@@ -21,7 +21,7 @@ class Enemy(Shooter):
                 self.health -= self.damage_take
                 print(self.health)
                 bullet.kill()
-
+                self.image.fill(ORANGE)
                 if self.health <= 0:
                     print("Fast Enemy Defeated!")
                     self.kill()
