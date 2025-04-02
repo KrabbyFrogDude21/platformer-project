@@ -9,9 +9,9 @@ class Player(Shooter):
         self.vel_y = 0
         self.on_ground = False
         self.last_pressed = True  # Right is true, left is false
-        self.health = 3000
+        self.health = 20
         self.init_shot_cooldown = 20
-        self.player_bullet_speed = 7
+        self.bullet_speed = 7
         self.shot_cooldown = 0
         self.direction = 1
 
@@ -40,7 +40,7 @@ class Player(Shooter):
                 self.direction = -1
         
             if self.shot_cooldown == 0:    
-                self.shoot(self.direction, BLUE, self.player_bullet_speed)
+                self.shoot(self.direction, BLUE, self.bullet_speed)
                 self.shot_cooldown = self.init_shot_cooldown
             else:
                 self.shot_cooldown -= 1
@@ -52,6 +52,10 @@ class Player(Shooter):
         #Horizontal collision
         if self.rect.left < 0:
             self.rect.x = 0
+        elif 3300 <= self.rect.x <= 3320 and self.rect.y > 150:
+            self.rect.x = 3320
+        elif 4080 <= self.rect.x and self.rect.y > 150:
+            self.rect.x = 4080
         for platform in platforms:
             if self.rect.colliderect(platform.rect):
                 if self.vel_x > 0:  
@@ -85,7 +89,7 @@ class Player(Shooter):
                 if self.rect.colliderect(bullet.rect):
                     bullet.kill()
                     self.health -= 20
-                    #print("Player health:",self.health)
+                    print("Player health:",self.health)
 
 
     def teleport(self, new_x, new_y, camera_x):
@@ -97,12 +101,16 @@ class Player(Shooter):
         self.rect.y = new_y
 
     def collide_powerup(self, powerup_group):
-        pass
+        for powerup in powerup_group:
+            if self.rect.colliderect(powerup.rect):
+                powerup.activate(self)
+                powerup.kill()
 
     
     #Combined all player functions into 1 for code readability
-    def update(self, enemy_group, keys, platforms):
+    def update(self, enemy_group, keys, platforms, powerup_group):
         self.move(keys)
         self.collide_bullet(enemy_group)
         self.collide_platform(platforms)
+        self.collide_powerup(powerup_group)
 

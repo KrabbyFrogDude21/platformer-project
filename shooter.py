@@ -1,6 +1,6 @@
 import pygame
 pygame.init()
-from bullet import Bullet
+from projectiles.bullet import Bullet
 from constants import WIDTH, HEIGHT
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))

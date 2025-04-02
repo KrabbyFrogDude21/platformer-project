@@ -3,8 +3,9 @@ from constants import *
 from player import Player
 from enemies.bouncer import Bouncer
 from enemies.shooter_enemy import ShooterEnemy
+from enemies.boss import Boss
 from platforms import Platform
-
+from powerup import Powerup
 
 class Game:
     def __init__(self):
@@ -16,8 +17,12 @@ class Game:
         self.camera_x = 0
         self.player = Player()
         self.enemy_group = pygame.sprite.Group()
-        
+        self.boss_spawned = False
+        self.powerup_group = pygame.sprite.Group()
+        self.powerup1 = Powerup(3600, 100)
+        self.powerup_group.add(self.powerup1)
         # Add enemies
+
         self.enemy_group.add(Bouncer(600, HEIGHT - 50, 400, 800))
         self.enemy_group.add(Bouncer(500 + 920, HEIGHT - 50, 400 + 920, 800 + 920))        
         self.enemy_group.add(ShooterEnemy(750, 450))
@@ -51,15 +56,18 @@ class Game:
             Platform(3800, 120, 600, 10),
             Platform(3800, 0, 10, 120),
             Platform(3200, 120, 10, 120 + GROUND_HEIGHT),
-            Platform(3450, 450, 100, 10), #boss platform
-            Platform(3950, 450, 100, 10) #boss platform
+            Platform(3400, 470, 25, 10), #boss platform
+            Platform(3950, 470, 25, 10), #boss platform
+            Platform(3550, 410, 25, 10), #boss platform
+            Platform(3800, 410, 25, 10) #boss platform
         ]
 
-
     def update_camera(self):
-        if self.player.rect.centerx > WIDTH // 2:
-            self.camera_x = self.player.rect.centerx - (WIDTH // 2)
+        if self.player.rect.y > 200 and self.player.rect.x >= 3320: #Enter boss arena
+            self.camera_x = 3320  
 
+        elif self.player.rect.centerx > WIDTH // 2:
+            self.camera_x = self.player.rect.centerx - (WIDTH // 2)
     # Draws everything with the camera offset for scrolling camera
     def draw(self, x, y, image):
         self.screen.blit(image, (x - self.camera_x, y))
@@ -79,10 +87,17 @@ class Game:
             self.player.rect.midbottom = (100, 500)
             self.camera_x = 0  # Reset the camera position
 
-        self.player.update(self.enemy_group, keys, self.platforms)
+        if self.player.rect.y > 150 and self.player.rect.x >= 3320 and not self.boss_spawned:
+            self.boss = Boss(3900, GROUND_HEIGHT - 50)
+            self.enemy_group.add(self.boss)
+            self.boss_spawned = True
+            self.camera_x = 3320  # Lock the camera
+
+
+        self.player.update(self.enemy_group, keys, self.platforms, self.powerup_group)
         if keys[pygame.K_t]:  # For example, pressing 'T' will teleport
             self.player.teleport(3200, 110, self.camera_x)
-
+        
         # Update all enemies in the group
         for enemy in self.enemy_group:
             enemy.update(self.player)  # Works for all enemy types
@@ -92,7 +107,8 @@ class Game:
         self.player.bullets.update(self.platforms, self.camera_x)
         mouse_x, mouse_y = pygame.mouse.get_pos()
         #print(mouse_x, mouse_y)
-        print(self.camera_x)
+        #print(self.camera_x)
+
 
 
     def render_game(self):
@@ -101,6 +117,7 @@ class Game:
         # Draw platforms
         for platform in self.platforms:
             self.draw(platform.rect.x, platform.rect.y, platform.image)
+
 
         # Draw player
         self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
@@ -118,6 +135,9 @@ class Game:
             if hasattr(enemy, "bullets"):
                 for bullet in enemy.bullets:
                     self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+
+        for powerup in self.powerup_group:
+            self.draw(powerup.rect.x, powerup.rect.y, powerup.image)
 
         pygame.display.update()
 

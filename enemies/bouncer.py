@@ -22,7 +22,7 @@ class Bouncer(Enemy):
         
 
         
-        if self.rect.colliderect(player) and self.damage_timer == 0:
+        if self.rect.colliderect(player.rect) and self.damage_timer == 0:
             player.health -= 20
             self.damage_timer = self.init_damage_timer
             #print("Player health:",player)
