@@ -14,6 +14,7 @@ class Player(Shooter):
         self.bullet_speed = 7
         self.shot_cooldown = 0
         self.direction = 1
+        self.powerup = False
 
 
     def move(self, keys):
@@ -42,8 +43,8 @@ class Player(Shooter):
             if self.shot_cooldown == 0:    
                 self.shoot(self.direction, BLUE, self.bullet_speed)
                 self.shot_cooldown = self.init_shot_cooldown
-            else:
-                self.shot_cooldown -= 1
+        if self.shot_cooldown > 0:
+            self.shot_cooldown -= 1
 
     def collide_platform(self, platforms):
         global camera_x
@@ -105,6 +106,8 @@ class Player(Shooter):
             if self.rect.colliderect(powerup.rect):
                 powerup.activate(self)
                 powerup.kill()
+                self.powerup = True
+
 
     
     #Combined all player functions into 1 for code readability

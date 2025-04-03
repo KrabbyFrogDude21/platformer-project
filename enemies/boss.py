@@ -9,7 +9,7 @@ class Boss(Enemy):
         self.image = pygame.Surface((100, 100))  
         self.image.fill(PURPLE)
         self.rect = self.image.get_rect(midleft=(x, y))
-        self.health = 200
+        self.health = 400
         self.speed = 1  
         self.shoot_timer = 120  
         self.exist = True  

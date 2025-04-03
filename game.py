@@ -78,15 +78,21 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
         return keys
-
+    
     def update(self, keys):
-        self.update_camera()
+
 
         if self.player.health <= 0:
+            if self.player.powerup:
+                self.player.rect.midbottom = (3600,100)
+                self.boss.kill()
+                self.boss_spawned = False
+            else:
+                self.player.rect.midbottom = (100, 500)
+                self.camera_x = 0  # Reset 
             self.player.health = 100
-            self.player.rect.midbottom = (100, 500)
-            self.camera_x = 0  # Reset the camera position
 
+        self.update_camera()
         if self.player.rect.y > 150 and self.player.rect.x >= 3320 and not self.boss_spawned:
             self.boss = Boss(3900, GROUND_HEIGHT - 50)
             self.enemy_group.add(self.boss)
