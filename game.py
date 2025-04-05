@@ -23,14 +23,7 @@ class Game:
         self.powerup_group.add(self.powerup1)
         # Add enemies
 
-        self.enemy_group.add(Bouncer(600, HEIGHT - 50, 400, 800))
-        self.enemy_group.add(Bouncer(500 + 920, HEIGHT - 50, 400 + 920, 800 + 920))        
-        self.enemy_group.add(ShooterEnemy(750, 450))
-        self.enemy_group.add(Bouncer(700 + 920, HEIGHT - 50, 400 + 920, 800 + 920))        
-        self.enemy_group.add(ShooterEnemy(2500, 320))
-        self.enemy_group.add(ShooterEnemy(2100, 320))
-        self.enemy_group.add(ShooterEnemy(2500, 220))
-        self.enemy_group.add(ShooterEnemy(2100, 220))
+
         self.platforms = [
             Platform(i * 400, GROUND_HEIGHT, 400, 50) for i in range(11)  # Ground
         ] + [
@@ -61,6 +54,27 @@ class Game:
             Platform(3550, 410, 25, 10), #boss platform
             Platform(3800, 410, 25, 10) #boss platform
         ]
+        self.original_enemies = [
+            ("bouncer", 600, HEIGHT - 50, 400, 800),
+            ("bouncer", 500 + 920, HEIGHT - 50, 400 + 920, 800 + 920),
+            ("shooter", 750, 450),
+            ("bouncer", 700 + 920, HEIGHT - 50, 400 + 920, 800 + 920),
+            ("shooter", 2500, 320),
+            ("shooter", 2100, 320),
+            ("shooter", 2500, 220),
+            ("shooter", 2100, 220),
+        ]
+
+        self.spawn_enemies()
+    def spawn_enemies(self):
+        self.enemy_group.empty()  # Clear current enemies
+        for e in self.original_enemies:
+            if e[0] == "bouncer":
+                _, x, y, left, right = e
+                self.enemy_group.add(Bouncer(x, y, left, right))
+            elif e[0] == "shooter":
+                _, x, y = e
+                self.enemy_group.add(ShooterEnemy(x, y))
 
     def update_camera(self):
         if self.player.rect.y > 200 and self.player.rect.x >= 3320: #Enter boss arena
@@ -90,7 +104,8 @@ class Game:
             else:
                 self.player.rect.midbottom = (100, 500)
                 self.camera_x = 0  # Reset 
-            self.player.health = 100
+            self.player.health = 20
+            self.spawn_enemies()
 
         self.update_camera()
         if self.player.rect.y > 150 and self.player.rect.x >= 3320 and not self.boss_spawned:

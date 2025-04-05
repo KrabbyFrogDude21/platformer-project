@@ -6,7 +6,7 @@ class Bouncer(Enemy):
         self.health = 20
         self.x1 = x1
         self.x2 = x2
-        self.vel_x = 7
+        self.vel_x = 10
         self.init_damage_timer = 20
         self.damage_timer = 20
 
