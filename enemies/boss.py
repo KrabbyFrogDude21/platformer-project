@@ -1,7 +1,8 @@
 import pygame
 from enemies.enemy import Enemy  
 from projectiles.bossbullet import BossBullet
-from constants import PURPLE, RED
+from constants import PURPLE, ORANGE, RED, WIDTH, HEIGHT
+
 
 class Boss(Enemy):
     def __init__(self, x, y):
@@ -9,10 +10,12 @@ class Boss(Enemy):
         self.image = pygame.Surface((100, 100))  
         self.image.fill(PURPLE)
         self.rect = self.image.get_rect(midleft=(x, y))
-        self.health = 400
-        self.speed = 1  
+        self.health = 500
+        self.speed = 1
         self.shoot_timer = 120  
-        self.exist = True  
+        self.shoot_cooldown = 120
+        self.exist = True
+
 
     def update(self, player):
         super().update(player)
@@ -31,6 +34,23 @@ class Boss(Enemy):
         if self.shoot_timer == 0:
             bullet = BossBullet(self.rect.centerx, self.rect.centery, player.rect.centerx, player.rect.centery, RED, 10)
             self.bullets.add(bullet)
-            self.shoot_timer = 120  
+            self.shoot_timer = self.shoot_cooldown
         else:
             self.shoot_timer -= 1
+
+    def take_damage(self, player):
+        for bullet in player.bullets:
+            if self.rect.colliderect(bullet.rect):
+                self.health -= self.damage_take
+                print(f"Boss Health: {self.health}")
+                bullet.kill()
+
+                # Change color to orange at half health
+                if self.health <= 300:
+                    self.image.fill(ORANGE)
+                    self.shoot_cooldown = 60
+
+                if self.health <= 0:
+                    print("Boss Defeated!")
+                    self.kill()
+                    self.exist = False

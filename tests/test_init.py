@@ -26,7 +26,7 @@ def test_enemy_init():
     assert enemy.rect.y == 360
     assert enemy.image.get_at((0, 0)) == RED
     assert enemy.shoot_timer == 120
-    assert enemy.enemy_bullet_speed == 7
+    assert enemy.bullet_speed == 7
     assert enemy.exist == True
 
 def test_platform_init():

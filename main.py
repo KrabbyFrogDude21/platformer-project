@@ -4,13 +4,12 @@ from game import Game
 def main():
     pygame.init()
     
-    # Create an instance of the Game class
     game = Game()
     
-    # Run the game loop
     game.run()
 
     pygame.quit()
 
 if __name__ == "__main__":
     main()
+        

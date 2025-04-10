@@ -11,6 +11,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.running = True
+        self.game_finished = False
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("cool game")
         self.clock = pygame.time.Clock()
@@ -19,7 +20,7 @@ class Game:
         self.enemy_group = pygame.sprite.Group()
         self.boss_spawned = False
         self.powerup_group = pygame.sprite.Group()
-        self.powerup1 = Powerup(3600, 100)
+        self.powerup1 = Powerup(3600, 80)
         self.powerup_group.add(self.powerup1)
         # Add enemies
 
@@ -66,6 +67,7 @@ class Game:
         ]
 
         self.spawn_enemies()
+        
     def spawn_enemies(self):
         self.enemy_group.empty()  # Clear current enemies
         for e in self.original_enemies:
@@ -82,6 +84,7 @@ class Game:
 
         elif self.player.rect.centerx > WIDTH // 2:
             self.camera_x = self.player.rect.centerx - (WIDTH // 2)
+
     # Draws everything with the camera offset for scrolling camera
     def draw(self, x, y, image):
         self.screen.blit(image, (x - self.camera_x, y))
@@ -94,8 +97,6 @@ class Game:
         return keys
     
     def update(self, keys):
-
-
         if self.player.health <= 0:
             if self.player.powerup:
                 self.player.rect.midbottom = (3600,100)
@@ -103,9 +104,10 @@ class Game:
                 self.boss_spawned = False
             else:
                 self.player.rect.midbottom = (100, 500)
-                self.camera_x = 0  # Reset 
+                self.camera_x = 0 
+                self.spawn_enemies()
             self.player.health = 20
-            self.spawn_enemies()
+
 
         self.update_camera()
         if self.player.rect.y > 150 and self.player.rect.x >= 3320 and not self.boss_spawned:
@@ -113,41 +115,36 @@ class Game:
             self.enemy_group.add(self.boss)
             self.boss_spawned = True
             self.camera_x = 3320  # Lock the camera
+        elif self.boss_spawned:
+           if self.boss.exist == False:
+                self.game_finished = True
+        elif self.player.secret_powerup:
+                self.game_finished = True
 
 
         self.player.update(self.enemy_group, keys, self.platforms, self.powerup_group)
-        if keys[pygame.K_t]:  # For example, pressing 'T' will teleport
-            self.player.teleport(3200, 110, self.camera_x)
-        
-        # Update all enemies in the group
+        if keys[pygame.K_t]: 
+            self.player.teleport(3300, 110, self.camera_x)
+  
         for enemy in self.enemy_group:
-            enemy.update(self.player)  # Works for all enemy types
+            enemy.update(self.player) 
             enemy.bullets.update(self.platforms, self.camera_x)
 
-        # Update player bullets
         self.player.bullets.update(self.platforms, self.camera_x)
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        #print(mouse_x, mouse_y)
-        #print(self.camera_x)
 
 
 
     def render_game(self):
         self.screen.fill(WHITE)
 
-        # Draw platforms
         for platform in self.platforms:
             self.draw(platform.rect.x, platform.rect.y, platform.image)
 
-
-        # Draw player
         self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
 
-        # Draw all enemies
         for enemy in self.enemy_group:
             self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
-
-        # Draw player bullets
         for bullet in self.player.bullets:
             self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
 
@@ -162,10 +159,29 @@ class Game:
 
         pygame.display.update()
 
+    def display_finish_screen(self):
+        font = pygame.font.Font(None, 50)
+        if self.player.secret_powerup:
+            text = font.render("Secret Ending", True, (0, 255, 255))
+        else:
+            text = font.render("You Win!", True, (255, 255, 255))
+        self.screen.fill(BLACK)
+        self.screen.blit(text, (WIDTH // 2 - text.get_width() // 2, HEIGHT // 2))
+
+        pygame.display.flip()
+
+
     def run(self):
         while self.running:
-            keys = self.handle_events()
-            self.update(keys)
-            self.render_game()
-            self.clock.tick(60)
-        pygame.quit()
+            try:
+                self.clock.tick(60)
+                keys = self.handle_events()
+                if not self.game_finished:
+                    self.update(keys)
+                    self.render_game()
+                else:
+                    self.display_finish_screen()
+
+            except Exception as e:
+                print("Error occured:", e)
+                pygame.quit()
