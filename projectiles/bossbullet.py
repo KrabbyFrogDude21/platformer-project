@@ -8,7 +8,7 @@ class BossBullet(Projectile):
 
         dx = target_x - x
         dy = target_y - y
-        distance = math.hypot(dx, dy) or 1  #Avoid zero division error
+        distance = math.hypot(dx, dy) or 1          #Avoid zero division error
         self.vel_x = (dx / distance) * speed
         self.vel_y = (dy / distance) * speed
 
@@ -16,4 +16,8 @@ class BossBullet(Projectile):
         super().update(camera_x)
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y 
+
+        if self.rect.x < 3200 or self.rect.x > 4550: #Delete bullets that go out of arena boundary
+            self.kill()
+        #print(self.rect.x)
 

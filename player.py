@@ -46,7 +46,7 @@ class Player(Shooter):
             
                 for powerup in powerup_group:
                     powerup.image.fill(ORANGE)
-                    powerup.secret_way = False
+                    powerup.secret_way = False #Disables secret ending if shoot
 
             if self.shot_cooldown > 0:
                 self.shot_cooldown -= 1
@@ -103,7 +103,7 @@ class Player(Shooter):
                     if self.rect.colliderect(bullet.rect):
                         bullet.kill()
                         self.health -= 20
-                        print("Player health:", self.health)
+
             
         except Exception as e:
             print("Player bullet collision error:", e)

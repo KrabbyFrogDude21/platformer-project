@@ -1,16 +1,19 @@
 from constants import *
 from shooter import Shooter
 
-# Enemy Class (Shoots Every 3 Seconds)
+
 class Enemy(Shooter):
     def __init__(self, x, y):
-        super().__init__(x, y, RED)
-        self.init_shooter_timer = 120
-        self.shoot_timer = self.init_shooter_timer
-        self.bullet_speed = 10
-        self.health = 40
-        self.damage_take = 20
-        self.exist = True
+        try:
+            super().__init__(x, y, RED)
+            self.init_shooter_timer = 120
+            self.shoot_timer = self.init_shooter_timer
+            self.bullet_speed = 10
+            self.health = 40
+            self.damage_take = 20
+            self.exist = True
+        except Exception as e:
+            print("Enemy initialisation error:",e)
 
     def update(self, player):
         self.take_damage(player)
@@ -19,10 +22,9 @@ class Enemy(Shooter):
         for bullet in player.bullets:
             if self.rect.colliderect(bullet.rect):
                 self.health -= self.damage_take
-                print(self.health)
+                #print(self.health)
                 bullet.kill()
                 if self.health <= 0:
-                    print("Fast Enemy Defeated!")
                     self.kill()
 
     def shooting_logic(self,player):
