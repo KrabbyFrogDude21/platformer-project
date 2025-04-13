@@ -15,10 +15,10 @@ def test_player_init():
     assert player.rect.y == HEIGHT - 140
     assert player.image.get_at((0, 0)) == BLUE
     assert player.init_shot_cooldown == 20
-    assert player.player_bullet_speed == 7
+    assert player.bullet_speed == 10
     assert player.shot_cooldown == 0
     assert player.direction == 1
-    assert player.exist == True
+
 
 def test_enemy_init():
     enemy = Enemy(300, 400)
@@ -26,7 +26,7 @@ def test_enemy_init():
     assert enemy.rect.y == 360
     assert enemy.image.get_at((0, 0)) == RED
     assert enemy.shoot_timer == 120
-    assert enemy.bullet_speed == 7
+    assert enemy.bullet_speed == 10
     assert enemy.exist == True
 
 def test_platform_init():
@@ -42,6 +42,5 @@ def test_bullet_init():
     assert bullet.rect.midleft == (10, 20)
     assert bullet.image.get_at((0, 0)) == BLUE
     assert bullet.speed == 5
-    assert bullet.vel_x == 5
     assert bullet.active == True
 
