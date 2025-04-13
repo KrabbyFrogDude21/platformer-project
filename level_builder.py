@@ -12,7 +12,7 @@ class LevelBuilder:
 
     def create_platforms(self):
         platforms = [
-            Platform(i * 400, 550, 400, 50) for i in range(11)  # Ground
+            Platform(i * 400, 550, 400, 50) for i in range(11)  #Iteration for ground
         ] + [
             Platform(50, 500, 300, 50),
             Platform(200, 450, 100, 100),
@@ -61,9 +61,9 @@ class LevelBuilder:
         enemy_group = pygame.sprite.Group()
         for e in self.original_enemies:
             if e[0] == "bouncer":
-                _, x, y, left, right = e #Refers to its parameters
+                _, x, y, left, right = e #Refers to bouncer's parameters
                 enemy_group.add(Bouncer(x, y, left, right))
             elif e[0] == "shooter":
-                _, x, y = e 
+                _, x, y = e #Refers to shooter's parameters
                 enemy_group.add(ShooterEnemy(x, y))
         return enemy_group

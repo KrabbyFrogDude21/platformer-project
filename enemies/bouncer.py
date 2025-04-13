@@ -29,3 +29,5 @@ class Bouncer(Enemy):
         
         if self.damage_timer > 0:
             self.damage_timer -= 1
+        elif self.damage_timer < 0:
+            self.damage_timer = 0 #Prevents from going below 0

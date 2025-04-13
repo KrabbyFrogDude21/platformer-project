@@ -85,28 +85,31 @@ class Game:
 
 
     def render_game(self):
-        self.screen.fill(WHITE)
+        try:
+            self.screen.fill(WHITE)
 
-        for platform in self.platforms:
-            self.draw(platform.rect.x, platform.rect.y, platform.image)
+            for platform in self.platforms:
+                self.draw(platform.rect.x, platform.rect.y, platform.image)
 
-        self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
+            self.draw(self.player.rect.x, self.player.rect.y, self.player.image)
 
-        for enemy in self.enemy_group:
-            self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
-        for bullet in self.player.bullets:
-            self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+            for enemy in self.enemy_group:
+                self.draw(enemy.rect.x, enemy.rect.y, enemy.image)
+            for bullet in self.player.bullets:
+                self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
 
-        # Draw enemy bullets, only if they have bullets
-        for enemy in self.enemy_group:
-            if hasattr(enemy, "bullets"):
-                for bullet in enemy.bullets:
-                    self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
+            # Draw enemy bullets, only if they have bullets
+            for enemy in self.enemy_group:
+                if hasattr(enemy, "bullets"):
+                    for bullet in enemy.bullets:
+                        self.draw(bullet.rect.x, bullet.rect.y, bullet.image)
 
-        for powerup in self.powerup_group:
-            self.draw(powerup.rect.x, powerup.rect.y, powerup.image)
+            for powerup in self.powerup_group:
+                self.draw(powerup.rect.x, powerup.rect.y, powerup.image)
 
-        pygame.display.update()
+            pygame.display.update()
+        except Exception as e:
+            print("Render error:",e)
 
     def display_finish_screen(self):
         font = pygame.font.Font(None, 50)

@@ -17,5 +17,4 @@ class ShooterEnemy(Enemy):
                 bullet.kill()
                 self.image.fill(ORANGE)  # Orange flash on damage
                 if self.health <= 0:
-                    #print("shooter enemy died!")
                     self.kill()

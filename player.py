@@ -108,7 +108,7 @@ class Player(Shooter):
         except Exception as e:
             print("Player bullet collision error:", e)
 
-    def teleport(self, new_x, new_y, camera_x):
+    def teleport(self, new_x, new_y, camera_x): #Not called in game.py because it was only for testing
         try:
             self.rect.x = new_x - camera_x
             self.rect.y = new_y
