@@ -65,6 +65,9 @@ class Game:
                 self.boss.kill()
                 self.boss_spawned = False
             else:
+                for powerup in self.powerup_group:
+                    powerup.secret_way = True
+                    powerup.image.fill(PURPLE)
                 self.player.rect.midbottom = (100, 500)
                 self.camera_x = 0 
                 self.spawn_enemies()
